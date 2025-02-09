@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Macrodata Refinement Simulator</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111; /* page background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden; /* in case canvas is bigger than window */
+    }
+    canvas {
+      display: block;
+      background: #222; /* canvas background */
+    }
+  </style>
+</head>
+<body>
+<canvas id="refinementCanvas"></canvas>
+<script>
+  // Grid parameters
+  const rows = 30;           // number of rows
+  const cols = 50;           // number of columns
+  const digitSize = 14;      // base font size for digits (px)
+  const digitSpacing = 20;   // horizontal spacing (px)
+  const lineHeight = 26;     // vertical spacing (px)
+  const radius = 100;        // distance around cursor for scaling effect
+  const maxScale = 2.5;      // maximum scale factor at cursor center
+
+  // Prepare a 2D array of random digits
+  const randomDigits = [];
+  for (let r = 0; r < rows; r++) {
+    randomDigits[r] = [];
+    for (let c = 0; c < cols; c++) {
+      randomDigits[r][c] = Math.floor(Math.random() * 10); // 0-9
+    }
+  }
+
+  // Get the canvas and context
+  const canvas = document.getElementById("refinementCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Adjust the canvas size based on grid dimensions
+  canvas.width = cols * digitSpacing;
+  canvas.height = rows * lineHeight;
+
+  // Track mouse position
+  let mouseX = -9999, mouseY = -9999;
+
+  // Update mouse position on mousemove
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+
+  // Rendering loop
+  function draw() {
+    // Clear background
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set text properties (will change font size per digit)
+    ctx.fillStyle = "#0ff"; // bright, cyan-like color
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+
+    // Draw digits
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const digit = randomDigits[r][c];
+
+        // Calculate the center position of each "cell" in the grid
+        const x = c * digitSpacing + digitSpacing / 2;
+        const y = r * lineHeight + lineHeight / 2;
+
+        // Distance from mouse
+        const dx = x - mouseX;
+        const dy = y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Scale factor based on distance to cursor
+        let scale = 1;
+        if (dist < radius) {
+          // Goes from `maxScale` at dist=0 down to 1 at dist=radius
+          scale = 1 + (maxScale - 1) * (1 - dist / radius);
+        }
+
+        // Apply font size with scale
+        ctx.font = `${digitSize * scale}px monospace`;
+        // Draw the digit
+        ctx.fillText(digit, x, y);
+      }
+    }
+    // Continue the animation loop
+    requestAnimationFrame(draw);
+  }
+
+  // Start rendering
+  draw();
+</script>
+</body>
+</html>
