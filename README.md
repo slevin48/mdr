@@ -1,5 +1,7 @@
 # Macro Data Refinement
 
+![lumon](img/lumon-logo.png)
+
 First version with ChatGPT Canvas:
 
 ![MDR v1](img/mdr-v1.png)
@@ -21,3 +23,5 @@ https://chatgpt.com/canvas/shared/67a7f48c1d608191927c5a9fa49f9a09
 ## Resources
 
 https://x.com/OpenAIDevs/status/1882876844208472339
+
+![scary](img/scary.png)
