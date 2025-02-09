@@ -11,11 +11,14 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      width: 100vw;
       overflow: hidden; /* in case canvas is bigger than window */
     }
     canvas {
       display: block;
       background: #222; /* canvas background */
+      width: 100vw;
+      height: 100vh;
     }
   </style>
 </head>
@@ -44,9 +47,21 @@
   const canvas = document.getElementById("refinementCanvas");
   const ctx = canvas.getContext("2d");
 
-  // Adjust the canvas size based on grid dimensions
-  canvas.width = cols * digitSpacing;
-  canvas.height = rows * lineHeight;
+  // Function to resize canvas
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Recalculate grid parameters based on new size
+    const digitSpacing = Math.ceil(canvas.width / cols);
+    const lineHeight = Math.ceil(canvas.height / rows);
+  }
+
+  // Initial resize
+  resizeCanvas();
+
+  // Add resize event listener
+  window.addEventListener('resize', resizeCanvas);
 
   // Track mouse position
   let mouseX = -9999, mouseY = -9999;
