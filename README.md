@@ -18,10 +18,6 @@ First version with ChatGPT Canvas:
 https://chatgpt.com/canvas/shared/67a7f48c1d608191927c5a9fa49f9a09
 
 
-## Description
-
-Context of the data refinement of the macro model. The model is based on the paper "A Macroeconomic Model with a Financial Sector" by Markus K. Brunnermeier and Yuliy Sannikov. The model is a dynamic stochastic general equilibrium model with a financial sector. The model is solved using the method of global solution.
-
 ## Resources
 
 https://x.com/OpenAIDevs/status/1882876844208472339
