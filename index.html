@@ -35,6 +35,15 @@
     #lumonLogo {
       font-weight: bold;
       font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #lumonLogo img {
+      height: 30px;
+      width: auto;
+      vertical-align: middle;
     }
 
     /* A simple progress bar container on the header */
@@ -104,7 +113,10 @@
 </head>
 <body>
   <div id="header">
-    <div id="lumonLogo">LUMON</div>
+    <div id="lumonLogo">
+      <img src="img/lumon-logo.png" alt="Lumon Logo">
+      <!-- LUMON -->
+    </div>
     <div style="display: flex; align-items: center;">
       <div id="progressBarContainer">
         <div id="progressBarFill"></div>
