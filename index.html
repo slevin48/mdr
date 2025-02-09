@@ -17,6 +17,7 @@
       background: #222;
       width: 100%;
       height: 100%;
+      touch-action: none; /* Prevent default scrolling on touch */
     }
   </style>
 </head>
@@ -27,8 +28,8 @@
   const digitSize = 14;      // base font size for digits (px)
   const rowSpacing = 26;     // vertical spacing (px)
   const colSpacing = 20;     // horizontal spacing (px)
-  const radius = 100;        // distance around cursor for scaling
-  const maxScale = 2.5;      // maximum scale factor at cursor center
+  const radius = 100;        // distance around pointer/touch for scaling
+  const maxScale = 2.5;      // max scale factor at pointer center
 
   const canvas = document.getElementById("refinementCanvas");
   const ctx = canvas.getContext("2d");
@@ -41,7 +42,7 @@
 
   resizeCanvas();
 
-  // Determine how many rows/cols fit on the screen
+  // Number of rows/cols based on screen size
   let rows = Math.floor(canvas.height / rowSpacing);
   let cols = Math.floor(canvas.width / colSpacing);
 
@@ -56,17 +57,40 @@
       }
     }
   }
-
   createDigits();
 
-  // Track mouse position
-  let mouseX = -9999, mouseY = -9999;
+  // Track pointer (mouse or touch) position
+  let pointerX = -9999;
+  let pointerY = -9999;
 
+  // Update pointer position for mouse events
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
+    pointerX = e.clientX - rect.left;
+    pointerY = e.clientY - rect.top;
   });
+
+  // On touch, track the first touch position
+  function handleTouch(e) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches.length > 0) {
+      pointerX = e.touches[0].clientX - rect.left;
+      pointerY = e.touches[0].clientY - rect.top;
+    }
+  }
+
+  // On touch end, reset pointer to offscreen
+  function handleTouchEnd(e) {
+    e.preventDefault();
+    pointerX = -9999;
+    pointerY = -9999;
+  }
+
+  canvas.addEventListener("touchstart", handleTouch, { passive: false });
+  canvas.addEventListener("touchmove", handleTouch, { passive: false });
+  canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+  canvas.addEventListener("touchcancel", handleTouchEnd, { passive: false });
 
   // If user resizes the window, re-fit the canvas and re-generate digits
   window.addEventListener("resize", () => {
@@ -76,9 +100,9 @@
     createDigits();
   });
 
-  // Main loop
+  // Render loop
   function draw() {
-    // clear background
+    // Clear background
     ctx.fillStyle = "#222";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -89,17 +113,15 @@
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const digit = randomDigits[r][c];
-
-        // cell center
         const x = c * colSpacing + colSpacing / 2;
         const y = r * rowSpacing + rowSpacing / 2;
 
-        // distance to mouse
-        const dx = x - mouseX;
-        const dy = y - mouseY;
-        const dist = Math.sqrt(dx*dx + dy*dy);
+        // Distance to pointer
+        const dx = x - pointerX;
+        const dy = y - pointerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // scale if within radius
+        // Scale if within radius
         let scale = 1;
         if (dist < radius) {
           scale = 1 + (maxScale - 1) * (1 - dist / radius);
